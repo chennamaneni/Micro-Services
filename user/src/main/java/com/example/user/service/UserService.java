@@ -72,7 +72,7 @@ public class UserService implements UserServiceImpl {
         String currentTime = sdf.format(dt);
         userInfo.setLast_updated(currentTime);
         repository.save(userInfo);
-        return "user "+userInfo.getUser_name()+" updated successfully";
+        return "user "+userInfo.getUser_name()+" updated Successfully.";
     }
 
     public static List<Account> addAccount(UserRequestDTO userInfo, User user) {

@@ -44,6 +44,10 @@ public class UserController {
     @PostMapping("/addUser")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UUID> createUser(@RequestBody @Valid UserRequestDTO userRequestDTO){
+        User user = userService.findByUserName(userRequestDTO.getUser_name());
+        if(user != null) {
+            return new ResponseEntity(("user "+userRequestDTO.getUser_name()+" already exists"), HttpStatus.CONFLICT);
+        }
         return new ResponseEntity(userService.addUserRecord(userRequestDTO), HttpStatus.CREATED);
     }
 
@@ -71,6 +75,10 @@ public class UserController {
     @DeleteMapping("/deleteUser/{userName}")
     @ResponseStatus(HttpStatus.GONE)
     public ResponseEntity<String> deleteUser(@PathVariable("userName") String userName){
+        User user = userService.findByUserName(userName);
+        if(user == null) {
+            return new ResponseEntity(("user "+userName+" not found"), HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity(userService.deleteUser(userName), HttpStatus.GONE);
     }
 
