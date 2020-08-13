@@ -1,32 +1,25 @@
 package com.example.user.service;
 
-import com.example.user.DTOs.AccountDTO;
 import com.example.user.DTOs.UserRequestDTO;
 import com.example.user.model.Account;
 import com.example.user.model.User;
-import com.example.user.repository.AccountRepository;
 import com.example.user.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class UserService implements UserServiceImpl {
 
+    private static final Logger log = LoggerFactory.getLogger(UserService.class);
+
     @Autowired
     private UserRepository repository;
 
-//    @Autowired
-//    private AccountRepository accountRepository;
-//
-//
-//    public UserService(UserRepository userRepository, AccountRepository accountRepository) {
-//        this.accountRepository = accountRepository;
-//        this.repository = userRepository;
-//    }
 
     @Override
     public List<User> findAll() {
@@ -59,6 +52,7 @@ public class UserService implements UserServiceImpl {
         List<Account> accounts =  addAccount(userInfo, addUser);
         addUser.setAccounts(accounts);
         repository.save(addUser);
+        log.debug("user %s added successfully", userInfo.getUser_name());
         return "user with username "+userInfo.getUser_name()+" saved successfully";
 
     }
@@ -72,6 +66,7 @@ public class UserService implements UserServiceImpl {
         String currentTime = sdf.format(dt);
         userInfo.setLast_updated(currentTime);
         repository.save(userInfo);
+        log.debug("user %s updated successfully", userInfo.getUser_name());
         return "user "+userInfo.getUser_name()+" updated Successfully.";
     }
 
@@ -93,6 +88,7 @@ public class UserService implements UserServiceImpl {
     @Override
     public String deleteUser(String userName) {
         repository.deleteUser(userName);
+        log.debug("user %s deleted successfully", userName);
         return "user "+userName+" successfully deleted";
     }
 

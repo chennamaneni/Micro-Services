@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name = 'LOG_PATTERN' value="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${hostName} —- %X{sessionId} —- [%15.15t] %-40.40c{1.} : %m%n%ex"> </Property>
+       
+    </Properties>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}" />
+        </Console>
+ 
+        <RollingFile name="FileAppender" fileName='/Users/vijithach/Documents/projects/user-config/user-service.log' filePattern='/Users/vijithach/Documents/projects/user-config//user-service-%d{yyyy-MM-dd}-%i.log'>
+            <PatternLayout> 
+               <Pattern>${LOG_PATTERN} </Pattern>
+             </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="1" />
+        </RollingFile>
+ 
+    </Appenders>
+    <Loggers>
+ 
+        <Logger name='com.example.user' level='debug' additivity="false">
+            <AppenderRef ref="FileAppender" />
+            <AppenderRef ref="ConsoleAppender" />
+        </Logger>
+ 
+        <Root level="info">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="FileAppender" />
+        </Root>
+    </Loggers>
+</Configuration>
