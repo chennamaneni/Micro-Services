@@ -24,15 +24,38 @@ public class ServiceUtils {
 //        return Arrays.asList(allAccounts);
 //    }
 
-    public static List<Account> accountDTOToObject(List<AccountDTO> accounts) {
+    public static List<Account> accountDTOToObject(List<AccountDTO> accounts, User user) {
+//        List<Account> existingAccounts = user.getAccounts();
+//        List<Account> accountsToAdd;
+//        List<Account> accountsToDelete;
+//        for(int i=0; i<accounts.size(); i++) {
+//            for(int j=0; j<user.getAccounts().size(); j++) {
+//                if(accounts.get(i).getAccountNumber().equals(user.getAccounts().get(j).getAccount_number())) {
+//                    accounts.remove(i);
+//                }
+//            }
+//        }
         List<Account>  allAccounts = new ArrayList<Account>();
         for(int i=0; i<accounts.size(); i++) {
             Account account = new Account();
             account.setAccount_number(accounts.get(i).getAccountNumber());
             account.setAccount_type(accounts.get(i).getAccountType());
-            allAccounts.add(i, account);
+            account.setUser(user);
+            allAccounts.add(account);
         }
         return allAccounts;
+    }
+
+    public static List<Account> addAccount(UserRequestDTO userInfo, User user) {
+        Account[] allAccounts = new Account[userInfo.getAccounts().size()];
+        for(int i=0; i<userInfo.getAccounts().size(); i++) {
+            Account account = new Account();
+            account.setAccount_number(userInfo.getAccounts().get(i).getAccountNumber());
+            account.setAccount_type(userInfo.getAccounts().get(i).getAccountType());
+            account.setUser(user);
+            allAccounts[i] = account;
+        }
+        return Arrays.asList(allAccounts);
     }
 
 }

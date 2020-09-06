@@ -3,6 +3,7 @@ package com.example.user.service;
 import com.example.user.DTOs.UserRequestDTO;
 import com.example.user.model.Account;
 import com.example.user.model.User;
+import com.example.user.repository.AccountRepository;
 import com.example.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,9 @@ public class UserService implements UserServiceImpl {
 
     @Autowired
     private UserRepository repository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
 
     @Override
@@ -52,7 +56,7 @@ public class UserService implements UserServiceImpl {
         List<Account> accounts =  addAccount(userInfo, addUser);
         addUser.setAccounts(accounts);
         repository.save(addUser);
-        log.debug("user %s added successfully", userInfo.getUser_name());
+        log.debug("user {} added successfully", userInfo.getUser_name());
         return "user with username "+userInfo.getUser_name()+" saved successfully";
 
     }
@@ -66,7 +70,7 @@ public class UserService implements UserServiceImpl {
         String currentTime = sdf.format(dt);
         userInfo.setLast_updated(currentTime);
         repository.save(userInfo);
-        log.debug("user %s updated successfully", userInfo.getUser_name());
+        log.debug("user {} updated successfully", userInfo.getUser_name());
         return "user "+userInfo.getUser_name()+" updated Successfully.";
     }
 
@@ -83,13 +87,24 @@ public class UserService implements UserServiceImpl {
     }
 
 
-
-
     @Override
     public String deleteUser(String userName) {
         repository.deleteUser(userName);
         log.debug("user %s deleted successfully", userName);
         return "user "+userName+" successfully deleted";
+    }
+
+    @Override
+    public String deleteUserAccount(String accountId) {
+        accountRepository.deleteUserAccountById(Long.parseLong(accountId));
+        log.debug("account with id %s deleted successfully", accountId);
+        return "account with id "+accountId+" successfully deleted";
+    }
+
+
+    @Override
+    public Account findByAccountId(String accountId) {
+        return (Account) accountRepository.findByAccountId(Long.parseLong(accountId));
     }
 
 }

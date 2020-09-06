@@ -1,7 +1,9 @@
 package com.example.user.controller;
 
 
+import com.example.user.DTOs.AccountDTO;
 import com.example.user.DTOs.UserRequestDTO;
+import com.example.user.model.Account;
 import com.example.user.model.User;
 import com.example.user.service.ServiceUtils;
 import com.example.user.service.UserServiceImpl;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -80,7 +83,7 @@ public class UserController {
 
 
     @PostMapping("/updateUser")
-    public ResponseEntity<UUID> updateUser(@RequestHeader("session-id") String sessionId, @RequestBody UserRequestDTO userRequestDTO)  {
+    public ResponseEntity<UUID> updateUser(@RequestHeader("session-id") String sessionId, @RequestBody  @Valid UserRequestDTO userRequestDTO)  {
         try {
             ThreadContext.put("sessionId", sessionId);
             log.debug("received a request to update user {} with sessionId {}", userRequestDTO.getUser_name(), sessionId);
@@ -88,7 +91,7 @@ public class UserController {
             if (user == null) {
                 return new ResponseEntity(("user " + userRequestDTO.getUser_name() + " not found"), HttpStatus.NOT_FOUND);
             } else {
-                user.setAccounts(ServiceUtils.accountDTOToObject(userRequestDTO.getAccounts()));
+                user.setAccounts(ServiceUtils.accountDTOToObject(userRequestDTO.getAccounts(), user));
                 user.setEmail_id(userRequestDTO.getEmail_id());
                 user.setPswd(userRequestDTO.getPassword());
                 return new ResponseEntity(userService.updateUser(user), HttpStatus.OK);
@@ -99,6 +102,46 @@ public class UserController {
             ThreadContext.clearMap();
         }
     }
+
+    @PostMapping("/addUserAccount")
+    public ResponseEntity<UUID> updateUserAccount(@RequestHeader("session-id") String sessionId, @RequestBody UserRequestDTO userRequestDTO)  {
+        try {
+            ThreadContext.put("sessionId", sessionId);
+            log.debug("received a request to update user {} with sessionId {}", userRequestDTO.getUser_name(), sessionId);
+            User user = userService.findByUserName(userRequestDTO.getUser_name());
+            if (user == null) {
+                return new ResponseEntity(("user " + userRequestDTO.getUser_name() + " not found"), HttpStatus.NOT_FOUND);
+            } else {
+                user.setAccounts(ServiceUtils.accountDTOToObject(userRequestDTO.getAccounts(), user));
+                return new ResponseEntity(userService.updateUser(user), HttpStatus.OK);
+            }
+        }
+        finally {
+            // clear the thread context retained for next request
+            ThreadContext.clearMap();
+        }
+    }
+
+    @DeleteMapping("/deleteUserAccount/{id}")
+    public ResponseEntity<UUID> deleteUserAccount(@RequestHeader("session-id") String sessionId, @PathVariable("id") String accountId)  {
+        try {
+            ThreadContext.put("sessionId", sessionId);
+            log.debug("received a request to delete user Account with accountId {} and  sessionId {}", accountId, sessionId);
+            Account account = userService.findByAccountId(accountId);
+            if (account == null) {
+                return new ResponseEntity(("Account Id " + accountId + " not found"), HttpStatus.NOT_FOUND);
+            } else {
+                return new ResponseEntity(userService.deleteUserAccount(accountId), HttpStatus.OK);
+            }
+        }
+        finally {
+            // clear the thread context retained for next request
+            ThreadContext.clearMap();
+        }
+    }
+
+
+
 
     @DeleteMapping("/deleteUser/{userName}")
     @ResponseStatus(HttpStatus.GONE)
