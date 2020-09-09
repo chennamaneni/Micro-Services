@@ -23,6 +23,14 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build();
+//        return new Docket(DocumentationType.SWAGGER_2)
+//                .apiInfo(apiInfo())
+//                .select()
+//                .paths(Predicates.not(PathSelectors.regex("/error"))) // Exclude Spring error controllers
+//                .build();
+//        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
+//                .apis(Predicates.not(RequestHandlerSelectors.basePackage("org.springframework.boot")))
+//                .build();
     }
 
     @Bean

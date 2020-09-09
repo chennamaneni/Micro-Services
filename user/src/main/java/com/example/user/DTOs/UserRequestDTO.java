@@ -10,7 +10,7 @@ import java.util.List;
 
 public class UserRequestDTO {
 
-    private long user_id;
+  //  private long user_id;
 
     @Size(min=6, max=15, message = "User name length should be a minimum of 6 and a maximum of 15")
     @NotNull(message = "userName cannot be null or blank")
@@ -39,13 +39,13 @@ public class UserRequestDTO {
         this.accounts = accounts;
     }
 
-    public long getUser_id() {
-        return user_id;
-    }
+//    public long getUser_id() {
+//        return user_id;
+//    }
 
-    public void setUser_id(long user_id) {
-        this.user_id = user_id;
-    }
+//    public void setUser_id(long user_id) {
+//        this.user_id = user_id;
+//    }
 
     public String getUser_name() {
         return user_name;
