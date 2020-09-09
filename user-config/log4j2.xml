@@ -9,7 +9,7 @@
             <PatternLayout pattern="${LOG_PATTERN}" />
         </Console>
  
-        <RollingFile name="FileAppender" fileName='/Users/vijithach/Documents/projects/user-config/user-service.log' filePattern='/Users/vijithach/Documents/projects/user-config//user-service-%d{yyyy-MM-dd}-%i.log'>
+        <RollingFile name="FileAppender" fileName='' filePattern=''>
             <PatternLayout> 
                <Pattern>${LOG_PATTERN} </Pattern>
              </PatternLayout>
