@@ -67,8 +67,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UUID> createUser(@RequestHeader("session-id") String sessionId, @RequestBody @Valid UserRequestDTO userRequestDTO){
         try {
-            ThreadContext.put("sessionId", sessionId);
-            log.debug("Request received to add new user with username {} with sesssionId {}", userRequestDTO.getUser_name(), sessionId);
+          //  ThreadContext.put("sessionId", sessionId);
+            //log.debug("Request received to add new user with username {} with sesssionId {}", userRequestDTO.getUser_name(), sessionId);
             User user = userService.findByUserName(userRequestDTO.getUser_name());
             if (user != null) {
                 return new ResponseEntity(("user " + userRequestDTO.getUser_name() + " already exists"), HttpStatus.CONFLICT);
@@ -83,7 +83,7 @@ public class UserController {
 
 
     @PostMapping("/updateUser")
-    public ResponseEntity<UUID> updateUser(@RequestHeader("session-id") String sessionId, @RequestBody  @Valid UserRequestDTO userRequestDTO)  {
+    public ResponseEntity<Object> updateUser(@RequestHeader("session-id") String sessionId, @RequestBody  @Valid UserRequestDTO userRequestDTO)  {
         try {
             ThreadContext.put("sessionId", sessionId);
             log.debug("received a request to update user {} with sessionId {}", userRequestDTO.getUser_name(), sessionId);

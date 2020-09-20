@@ -34,6 +34,6 @@ public class GenericExceptionHandler extends ResponseEntityExceptionHandler {
             details.add(error.getDefaultMessage());
         }
         WebServiceErrorResponse error = new WebServiceErrorResponse("invalid Request" , details);
-        return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Object>(error, HttpStatus.BAD_REQUEST);
     }
 }

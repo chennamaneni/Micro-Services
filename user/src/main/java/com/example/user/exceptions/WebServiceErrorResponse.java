@@ -4,7 +4,6 @@ package com.example.user.exceptions;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
-@XmlRootElement(name = "error")
 public class WebServiceErrorResponse {
 
 
