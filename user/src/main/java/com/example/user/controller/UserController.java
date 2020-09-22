@@ -50,11 +50,19 @@ public class UserController {
 
     @GetMapping("/getUsers/{username}")
     @ResponseBody
-    public List<User> getUsersByUserName(@RequestHeader("session-id") String sessionId,  @PathVariable("username") String username) {
+    public ResponseEntity<List<User>> getUsersByUserName(@RequestHeader("session-id") String sessionId,  @PathVariable("username") String username) {
         try {
             ThreadContext.put("sessionId",sessionId);
             log.debug("Request received to get user Info for username {} with sesssionId {}", username, sessionId);
-            return userService.findUsersByUserName(username);
+            User user = userService.findByUserName(username);
+            if (user == null) {
+                log.error("user " + username + " not found to in the request to getUsers by username");
+                return new ResponseEntity(("user " + username + " not found"), HttpStatus.NOT_FOUND);
+            } else {
+                log.debug("Successfully returned the response for the call to get users by username");
+                return new ResponseEntity(userService.findUsersByUserName(username), HttpStatus.OK);
+            }
+
         }
         finally {
             // clear the thread context retained for next request
@@ -71,6 +79,7 @@ public class UserController {
             //log.debug("Request received to add new user with username {} with sesssionId {}", userRequestDTO.getUser_name(), sessionId);
             User user = userService.findByUserName(userRequestDTO.getUser_name());
             if (user != null) {
+                log.error("user with username {} already exists, request rejected to add user", userRequestDTO.getUser_name());
                 return new ResponseEntity(("user " + userRequestDTO.getUser_name() + " already exists"), HttpStatus.CONFLICT);
             }
             return new ResponseEntity(userService.addUserRecord(userRequestDTO), HttpStatus.CREATED);
@@ -89,6 +98,7 @@ public class UserController {
             log.debug("received a request to update user {} with sessionId {}", userRequestDTO.getUser_name(), sessionId);
             User user = userService.findByUserName(userRequestDTO.getUser_name());
             if (user == null) {
+                log.error("user with username {} doesnt exist, request rejected to update user", userRequestDTO.getUser_name());
                 return new ResponseEntity(("user " + userRequestDTO.getUser_name() + " not found"), HttpStatus.NOT_FOUND);
             } else {
                 user.setAccounts(ServiceUtils.accountDTOToObject(userRequestDTO.getAccounts(), user));
@@ -110,8 +120,15 @@ public class UserController {
             log.debug("received a request to update user {} with sessionId {}", userRequestDTO.getUser_name(), sessionId);
             User user = userService.findByUserName(userRequestDTO.getUser_name());
             if (user == null) {
+                log.error("UserName is invalid to add an account, username in the request {}",userRequestDTO.getUser_name());
                 return new ResponseEntity(("user " + userRequestDTO.getUser_name() + " not found"), HttpStatus.NOT_FOUND);
             } else {
+                // validate for accountType and accountNumber not null
+                boolean invalidInput = ServiceUtils.validateAccountFields(userRequestDTO.getAccounts());
+                if(invalidInput) {
+                    log.error("Received null/blank value for an account type/account Number to be added, responding a bad request error");
+                    return new ResponseEntity(("request to add userAccount has a null/bank accountType/accountType, rejected the request "), HttpStatus.BAD_REQUEST);
+                }
                 user.setAccounts(ServiceUtils.accountDTOToObject(userRequestDTO.getAccounts(), user));
                 return new ResponseEntity(userService.updateUser(user), HttpStatus.OK);
             }
@@ -129,6 +146,7 @@ public class UserController {
             log.debug("received a request to delete user Account with accountId {} and  sessionId {}", accountId, sessionId);
             Account account = userService.findByAccountId(accountId);
             if (account == null) {
+                log.error("uaccountId to delete account is invalid in the request, rejecting");
                 return new ResponseEntity(("Account Id " + accountId + " not found"), HttpStatus.NOT_FOUND);
             } else {
                 return new ResponseEntity(userService.deleteUserAccount(accountId), HttpStatus.OK);
@@ -151,6 +169,7 @@ public class UserController {
             log.debug("Request received to delete user with username {} with sesssionId {}", userName, sessionId);
             User user = userService.findByUserName(userName);
             if (user == null) {
+                log.error("user with username {} not found, request rejected to delete user", userName);
                 return new ResponseEntity(("user " + userName + " not found"), HttpStatus.NOT_FOUND);
             }
             return new ResponseEntity(userService.deleteUser(userName), HttpStatus.GONE);

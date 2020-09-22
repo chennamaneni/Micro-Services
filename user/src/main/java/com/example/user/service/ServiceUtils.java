@@ -58,4 +58,13 @@ public class ServiceUtils {
         return Arrays.asList(allAccounts);
     }
 
+    public static boolean validateAccountFields(List<AccountDTO> accounts) {
+        for(int i=0; i<accounts.size(); i++) {
+            if(accounts.get(i).getAccountNumber().isEmpty()|| accounts.get(i).getAccountType().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
